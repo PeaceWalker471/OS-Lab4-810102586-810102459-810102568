@@ -1,10 +1,8 @@
 #include "types.h"
 #include "stat.h"
 #include "user.h"
-
 #define NCHILD 8
 #define NITER 500000
-
 int
 main(void)
 {
@@ -22,7 +20,6 @@ main(void)
             printf(1, "fork failed\n");
             exit();
         }
-
         if(pid == 0){
             int j;
 
@@ -33,13 +30,9 @@ main(void)
             exit();
         }
     }
-
     while(wait() > 0)
         ;
-
     printf(1, "Expected getpid count = %d\n", expected);
-
-    // 11 = SYS_getpid
     printf(1, "Actual getpid count   = %d\n",
            getcount(11));
 

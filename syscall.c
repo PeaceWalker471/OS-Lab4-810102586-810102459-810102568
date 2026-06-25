@@ -6,10 +6,12 @@
 #include "proc.h"
 #include "x86.h"
 #include "syscall.h"
+#include "spinlock.h"
 
 #define NSYSCALL 64
 
 uint syscall_count[NSYSCALL];
+struct spinlock syscall_lock;
 
 // User code makes a system call with INT T_SYSCALL.
 // System call number in %eax.
@@ -142,7 +144,9 @@ syscall(void)
 
   num = curproc->tf->eax;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+    acquire(&syscall_lock);
     syscall_count[num]++;
+    release(&syscall_lock);
     curproc->tf->eax = syscalls[num]();
   } else {
     cprintf("%d %s: unknown sys call %d\n",
