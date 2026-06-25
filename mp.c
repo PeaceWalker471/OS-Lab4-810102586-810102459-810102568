@@ -12,7 +12,7 @@
 #include "proc.h"
 
 struct cpu cpus[NCPU];
-int ncpu;
+int ncpu ;
 uchar ioapicid;
 
 static uchar
@@ -97,6 +97,8 @@ mpinit(void)
   struct mpconf *conf;
   struct mpproc *proc;
   struct mpioapic *ioapic;
+
+  cprintf("ncpu: %d\n", ncpu);
 
   if((conf = mpconfig(&mp)) == 0)
     panic("Expect to run on an SMP");
