@@ -7,6 +7,9 @@
 #include "mmu.h"
 #include "proc.h"
 
+#define NCPU 8
+#define NSYSCALL 32
+
 int
 sys_fork(void)
 {
@@ -90,15 +93,41 @@ sys_uptime(void)
   return xticks;
 }
 
-extern uint syscall_count[];
+extern uint syscall_count[NCPU][NSYSCALL];
 
 int
 sys_getcount(void)
 {
     int num;
+    int total = 0;
+    int i;
 
     if(argint(0, &num) < 0)
         return -1;
 
-    return syscall_count[num];
+    for(i = 0; i < NCPU; i++)
+        total += syscall_count[i][num];
+
+
+cprintf("kernel total = %d\n", total);
+
+    return total;
+}
+
+int
+sys_getcountcpu(void)
+{
+    int num;
+    int cpu;
+
+    if(argint(0, &num) < 0)
+        return -1;
+
+    if(argint(1, &cpu) < 0)
+        return -1;
+
+    if(cpu < 0 || cpu >= NCPU)
+        return -1;
+
+    return syscall_count[cpu][num];
 }

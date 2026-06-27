@@ -24,6 +24,7 @@ char* sbrk(int);
 int sleep(int);
 int uptime(void);
 int getcount(int);
+int getcountcpu(int, int);
 
 // ulib.c
 int stat(const char*, struct stat*);
