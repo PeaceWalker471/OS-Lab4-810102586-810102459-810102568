@@ -9,9 +9,16 @@
 #include "spinlock.h"
 
 #define NSYSCALL 64
+#define BUFFER_SIZE 16
 
 uint syscall_count[NCPU][NSYSCALL];
 struct spinlock syscall_lock;
+
+int buffer[BUFFER_SIZE];
+int head = 0;
+int tail = 0;
+int count = 0;
+struct spinlock buffer_lock;
 
 // User code makes a system call with INT T_SYSCALL.
 // System call number in %eax.
@@ -111,6 +118,9 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_getcount(void);
 extern int sys_getcountcpu(void);
+extern int sys_produce(void);
+extern int sys_consume(void);
+extern int sys_printsync(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -136,6 +146,9 @@ static int (*syscalls[])(void) = {
 [SYS_close]   sys_close,
 [SYS_getcount] sys_getcount,
 [SYS_getcountcpu] sys_getcountcpu,
+[SYS_produce] sys_produce,
+[SYS_consume] sys_consume,
+[SYS_printsync] sys_printsync,
 };
 
 void

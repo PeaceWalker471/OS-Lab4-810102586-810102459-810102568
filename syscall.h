@@ -22,3 +22,6 @@
 #define SYS_close  21
 #define SYS_getcount 22
 #define SYS_getcountcpu 23
+#define SYS_produce 24
+#define SYS_consume 25
+#define SYS_printsync 26

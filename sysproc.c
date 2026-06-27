@@ -6,6 +6,10 @@
 #include "memlayout.h"
 #include "mmu.h"
 #include "proc.h"
+#include "spinlock.h"
+
+struct spinlock print_lock;
+
 
 #define NCPU 8
 #define NSYSCALL 32
@@ -130,4 +134,93 @@ sys_getcountcpu(void)
         return -1;
 
     return syscall_count[cpu][num];
+}
+
+#define BUFFER_SIZE 16
+
+extern int buffer[BUFFER_SIZE];
+extern int head;
+extern int tail;
+extern int count;
+extern struct spinlock buffer_lock;
+
+int
+sys_produce(void)
+{
+    int value;
+
+    if(argint(0, &value) < 0)
+        return -1;
+
+    acquire(&buffer_lock);
+
+    if(count == BUFFER_SIZE){
+        release(&buffer_lock);
+        return -1;
+    }
+
+    buffer[tail] = value;
+
+    tail = (tail + 1) % BUFFER_SIZE;
+
+    count++;
+
+    release(&buffer_lock);
+
+    return 0;
+}
+
+int
+sys_consume(void)
+{
+    int value;
+
+    acquire(&buffer_lock);
+
+    if(count == 0){
+        release(&buffer_lock);
+        return -1;
+    }
+
+    value = buffer[head];
+
+    head = (head + 1) % BUFFER_SIZE;
+
+    count--;
+
+    release(&buffer_lock);
+
+    return value;
+}
+
+int
+sys_printsync(void)
+{
+    int type;
+    int id;
+    int value;
+
+    if(argint(0, &type) < 0)
+        return -1;
+
+    if(argint(1, &id) < 0)
+        return -1;
+
+    if(argint(2, &value) < 0)
+        return -1;
+
+    acquire(&print_lock);
+
+    if(type == 0)
+        cprintf("Producer %d finished (Produced = %d)\n",
+                id,
+                value);
+    else
+        cprintf("Consumer %d finished (Consumed = %d)\n",
+                id,
+                value);
+
+    release(&print_lock);
+
+    return 0;
 }

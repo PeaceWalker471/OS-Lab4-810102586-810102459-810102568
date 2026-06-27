@@ -183,6 +183,7 @@ UPROGS=\
 	_zombie\
 	_counttest\
 	_cpucounter\
+	_prodconstest\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
