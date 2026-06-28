@@ -5,6 +5,7 @@
 #include "mmu.h"
 #include "proc.h"
 #include "x86.h"
+#include "rwlock.h"
 
 static void startothers(void);
 static void mpmain(void)  __attribute__((noreturn));
@@ -13,6 +14,7 @@ extern char end[]; // first address after kernel loaded from ELF file
 extern struct spinlock syscall_lock;
 extern struct spinlock buffer_lock;
 extern struct spinlock print_lock;
+extern struct rwlock global_rwlock;
 
 // Bootstrap processor starts running C code here.
 // Allocate a real stack and switch to it, first
@@ -31,6 +33,7 @@ main(void)
   initlock(&syscall_lock, "syscall_count");
   initlock(&buffer_lock, "buffer");
   initlock(&print_lock, "print_lock");
+  rwlock_init(&global_rwlock);
   uartinit();      // serial port
   pinit();         // process table
   tvinit();        // trap vectors

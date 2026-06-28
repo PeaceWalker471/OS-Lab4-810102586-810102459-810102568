@@ -28,6 +28,10 @@ int getcountcpu(int, int);
 int produce(int);
 int consume(void);
 int printsync(int type, int id, int value);
+int rwreadlock(void);
+int rwreadunlock(void);
+int rwwritelock(void);
+int rwwriteunlock(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

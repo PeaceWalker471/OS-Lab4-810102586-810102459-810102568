@@ -121,6 +121,10 @@ extern int sys_getcountcpu(void);
 extern int sys_produce(void);
 extern int sys_consume(void);
 extern int sys_printsync(void);
+extern int sys_rwreadlock(void);
+extern int sys_rwreadunlock(void);
+extern int sys_rwwritelock(void);
+extern int sys_rwwriteunlock(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -149,6 +153,10 @@ static int (*syscalls[])(void) = {
 [SYS_produce] sys_produce,
 [SYS_consume] sys_consume,
 [SYS_printsync] sys_printsync,
+[SYS_rwreadlock]     sys_rwreadlock,
+[SYS_rwreadunlock]   sys_rwreadunlock,
+[SYS_rwwritelock]    sys_rwwritelock,
+[SYS_rwwriteunlock]  sys_rwwriteunlock,
 };
 
 void

@@ -25,3 +25,7 @@
 #define SYS_produce 24
 #define SYS_consume 25
 #define SYS_printsync 26
+#define SYS_rwreadlock      27
+#define SYS_rwreadunlock    28
+#define SYS_rwwritelock     29
+#define SYS_rwwriteunlock   30

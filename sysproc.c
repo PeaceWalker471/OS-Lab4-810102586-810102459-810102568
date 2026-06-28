@@ -7,6 +7,9 @@
 #include "mmu.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "rwlock.h"
+
+extern struct rwlock global_rwlock;
 
 struct spinlock print_lock;
 
@@ -248,6 +251,41 @@ sys_printsync(void)
         cprintf("\n===== Test Finished Successfully =====\n");
         break;
 
+    /* ---------- Reader/Writer ---------- */
+
+    case 6:
+        cprintf("===== Reader-Writer Test =====\n");
+        break;
+
+    case 7:
+        cprintf("[Reader %d] Entered\n",
+                id);
+        break;
+
+    case 8:
+        cprintf("[Reader %d] Leaving\n",
+                id);
+        break;
+
+    case 9:
+        cprintf("[Writer %d] Waiting\n",
+                id);
+        break;
+
+    case 10:
+        cprintf("[Writer %d] Entered\n",
+                id);
+        break;
+
+    case 11:
+        cprintf("[Writer %d] Leaving\n",
+                id);
+        break;
+
+    case 12:
+        cprintf("===== Reader-Writer Test Finished =====\n");
+        break;
+
     default:
         cprintf("Unknown printsync type: %d\n", type);
         break;
@@ -255,5 +293,33 @@ sys_printsync(void)
 
     release(&print_lock);
 
+    return 0;
+}
+
+int
+sys_rwreadlock(void)
+{
+    rwlock_acquire_read(&global_rwlock);
+    return 0;
+}
+
+int
+sys_rwreadunlock(void)
+{
+    rwlock_release_read(&global_rwlock);
+    return 0;
+}
+
+int
+sys_rwwritelock(void)
+{
+    rwlock_acquire_write(&global_rwlock);
+    return 0;
+}
+
+int
+sys_rwwriteunlock(void)
+{
+    rwlock_release_write(&global_rwlock);
     return 0;
 }

@@ -6,6 +6,10 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "rwlock.h"
+
+struct rwlock global_rwlock;
+extern struct rwlock global_rwlock;
 
 struct {
   struct spinlock lock;
@@ -532,3 +536,4 @@ procdump(void)
     cprintf("\n");
   }
 }
+
