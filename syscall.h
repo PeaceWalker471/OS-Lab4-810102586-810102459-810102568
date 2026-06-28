@@ -29,3 +29,5 @@
 #define SYS_rwreadunlock    28
 #define SYS_rwwritelock     29
 #define SYS_rwwriteunlock   30
+#define SYS_ticketlock_acquire   31
+#define SYS_ticketlock_release   32

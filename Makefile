@@ -28,6 +28,7 @@ OBJS = \
 	vectors.o\
 	vm.o\
 	rwlock.o\
+	ticketlock.o\
 
 # Cross-compiling (e.g., on Mac OS X)
 # TOOLPREFIX = i386-jos-elf
@@ -186,6 +187,7 @@ UPROGS=\
 	_cpucounter\
 	_prodconstest\
 	_rwtest\
+	_tickettest\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)

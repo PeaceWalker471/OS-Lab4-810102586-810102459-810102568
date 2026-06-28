@@ -6,6 +6,9 @@
 #include "proc.h"
 #include "x86.h"
 #include "rwlock.h"
+#include "ticketlock.h"
+
+struct ticketLock globalTicketLock;
 
 static void startothers(void);
 static void mpmain(void)  __attribute__((noreturn));
@@ -34,6 +37,7 @@ main(void)
   initlock(&buffer_lock, "buffer");
   initlock(&print_lock, "print_lock");
   rwlock_init(&global_rwlock);
+  ticketLock_init(&globalTicketLock);
   uartinit();      // serial port
   pinit();         // process table
   tvinit();        // trap vectors
@@ -62,7 +66,6 @@ mpmain(void)
 {
   cprintf("cpu%d: starting %d\n", cpuid(), cpuid());
   idtinit();       // load idt register
-  cprintf("CPU %d reached mpmain.\n" , cpuid());
   xchg(&(mycpu()->started), 1); // tell startothers() we're up
   scheduler();     // start running processes
 }

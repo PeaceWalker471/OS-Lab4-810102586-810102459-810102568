@@ -125,6 +125,8 @@ extern int sys_rwreadlock(void);
 extern int sys_rwreadunlock(void);
 extern int sys_rwwritelock(void);
 extern int sys_rwwriteunlock(void);
+extern int sys_ticketlock_acquire(void);
+extern int sys_ticketlock_release(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -157,6 +159,8 @@ static int (*syscalls[])(void) = {
 [SYS_rwreadunlock]   sys_rwreadunlock,
 [SYS_rwwritelock]    sys_rwwritelock,
 [SYS_rwwriteunlock]  sys_rwwriteunlock,
+[SYS_ticketlock_acquire]  sys_ticketlock_acquire,
+[SYS_ticketlock_release]  sys_ticketlock_release,
 };
 
 void

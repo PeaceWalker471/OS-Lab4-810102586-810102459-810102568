@@ -138,6 +138,10 @@ void            rwlock_acquire_read(struct rwlock *);
 void            rwlock_release_read(struct rwlock *);
 void            rwlock_acquire_write(struct rwlock *);
 void            rwlock_release_write(struct rwlock *);
+struct ticketLock;
+void            ticketLock_init(struct ticketLock *);
+void            ticketLock_acquire(struct ticketLock *);
+void            ticketLock_release(struct ticketLock *);
 
 // sleeplock.c
 void            acquiresleep(struct sleeplock*);

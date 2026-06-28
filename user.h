@@ -32,6 +32,8 @@ int rwreadlock(void);
 int rwreadunlock(void);
 int rwwritelock(void);
 int rwwriteunlock(void);
+int ticketlock_acquire(void);
+int ticketlock_release(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

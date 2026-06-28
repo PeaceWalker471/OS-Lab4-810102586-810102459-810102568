@@ -8,6 +8,9 @@
 #include "proc.h"
 #include "spinlock.h"
 #include "rwlock.h"
+#include "ticketlock.h"
+
+extern struct ticketLock globalTicketLock;
 
 extern struct rwlock global_rwlock;
 
@@ -321,5 +324,19 @@ int
 sys_rwwriteunlock(void)
 {
     rwlock_release_write(&global_rwlock);
+    return 0;
+}
+
+int
+sys_ticketlock_acquire(void)
+{
+    ticketLock_acquire(&globalTicketLock);
+    return 0;
+}
+
+int
+sys_ticketlock_release(void)
+{
+    ticketLock_release(&globalTicketLock);
     return 0;
 }
