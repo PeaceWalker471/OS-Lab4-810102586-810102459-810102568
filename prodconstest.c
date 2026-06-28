@@ -1,53 +1,54 @@
 #include "types.h"
 #include "stat.h"
 #include "user.h"
+
 #define NPRODUCER 2
 #define NCONSUMER 2
 #define NITEMS    20
+
 int
 main(void)
 {
     int i, j;
     int pid;
-    printf(1, "===== Producer-Consumer Test =====\n");
+
+    printsync(4, 0, 0);
+
+    /* Producer Processes */
     for(i = 0; i < NPRODUCER; i++){
         pid = fork();
 
         if(pid == 0){
-            int produced = 0;
-            int failed = 0;
 
             for(j = 0; j < NITEMS; j++){
 
-                while(produce(i * 100 + j) < 0)
-                    sleep(1);
+                produce(i * 100 + j);
 
-                produced++;
+                printsync(0, i, i * 100 + j);
             }
 
-            printsync(0, i, produced);
+            printsync(2, i, 0);
 
             exit();
         }
     }
 
+    /* Consumer Processes */
     for(i = 0; i < NCONSUMER; i++){
         pid = fork();
 
         if(pid == 0){
 
-            int consumed = 0;
             int value;
 
             for(j = 0; j < NITEMS; j++){
 
-                while((value = consume()) < 0)
-                    sleep(1);
+                value = consume();
 
-                consumed++;
+                printsync(1, i, value);
             }
 
-            printsync(1, i, consumed);
+            printsync(3, i, 0);
 
             exit();
         }
@@ -56,9 +57,7 @@ main(void)
     while(wait() > 0)
         ;
 
-    printf(1, "\n===== Test Finished =====\n");
-    printf(1, "Expected Produced : %d\n", NPRODUCER * NITEMS);
-    printf(1, "Expected Consumed : %d\n", NCONSUMER * NITEMS);
+    printsync(5, 0, 0);
 
     exit();
 }

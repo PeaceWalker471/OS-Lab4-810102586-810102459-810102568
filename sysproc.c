@@ -144,6 +144,9 @@ extern int tail;
 extern int count;
 extern struct spinlock buffer_lock;
 
+char full_channel;
+char empty_channel;
+
 int
 sys_produce(void)
 {
@@ -154,9 +157,8 @@ sys_produce(void)
 
     acquire(&buffer_lock);
 
-    if(count == BUFFER_SIZE){
-        release(&buffer_lock);
-        return -1;
+    while(count == BUFFER_SIZE){
+    sleep(&full_channel, &buffer_lock);
     }
 
     buffer[tail] = value;
@@ -164,6 +166,8 @@ sys_produce(void)
     tail = (tail + 1) % BUFFER_SIZE;
 
     count++;
+
+    wakeup(&empty_channel);
 
     release(&buffer_lock);
 
@@ -177,9 +181,8 @@ sys_consume(void)
 
     acquire(&buffer_lock);
 
-    if(count == 0){
-        release(&buffer_lock);
-        return -1;
+    while(count == 0){
+    sleep(&empty_channel, &buffer_lock);
     }
 
     value = buffer[head];
@@ -187,6 +190,8 @@ sys_consume(void)
     head = (head + 1) % BUFFER_SIZE;
 
     count--;
+
+    wakeup(&full_channel);
 
     release(&buffer_lock);
 
@@ -211,14 +216,42 @@ sys_printsync(void)
 
     acquire(&print_lock);
 
-    if(type == 0)
-        cprintf("Producer %d finished (Produced = %d)\n",
+    switch(type){
+
+    case 0:
+        cprintf("[Producer %d] Produced %d\n",
                 id,
                 value);
-    else
-        cprintf("Consumer %d finished (Consumed = %d)\n",
+        break;
+
+    case 1:
+        cprintf("[Consumer %d] Consumed %d\n",
                 id,
                 value);
+        break;
+
+    case 2:
+        cprintf("Producer %d finished.\n",
+                id);
+        break;
+
+    case 3:
+        cprintf("Consumer %d finished.\n",
+                id);
+        break;
+
+    case 4:
+        cprintf("===== Blocking Producer-Consumer Test =====\n");
+        break;
+
+    case 5:
+        cprintf("\n===== Test Finished Successfully =====\n");
+        break;
+
+    default:
+        cprintf("Unknown printsync type: %d\n", type);
+        break;
+    }
 
     release(&print_lock);
 
